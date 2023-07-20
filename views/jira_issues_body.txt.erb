@@ -38,8 +38,11 @@ h3. Session
 
 h3. Backtrace
 {code:title=Backtrace|borderStyle=solid}
-<% notice.backtrace_lines.each do |line| %>
+<% notice.backtrace_lines.take(50).each do |line| %>
 	<%= line.number %>:  <%= line.file_relative %> -> <%= line.method %>
+<% end %>
+<% if notice.backtrace.lines.count > 50 %>
+	(TRUNCATED)
 <% end %>
 {code}
 
