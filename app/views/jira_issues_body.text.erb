@@ -1,22 +1,33 @@
 h3. [See this exception on Errbit|<%= problem.url %>]
 h2. Steps to Reproduce
-#
-#
-#
+
+# ?
+# ?
+# ?
+
 h2. Expected Behavior
+
+\\
 
 h2. Actual Behavior
 
+\\
+
+----
+
 <% if notice = problem.notices.first %>
-h3. <%= notice.message %>
-h2. Summary
+h2. Details
+
+h3. Error Message
+<%=raw notice.message %>
+
 <% if notice.request['url'].present? %>
   h3. URL
   [<%= notice.request['url'] %>|<%= notice.request['url'] %>]
 <% end %>
 
 h3. Where
-<%= notice.where %>
+<%=raw notice.where %>
 
 h3. Occured
 <%= notice.created_at.to_s(:micro) %>
@@ -24,31 +35,29 @@ h3. Occured
 h3. Similar
 <%= (notice.problem.notices_count - 1).to_s %>
 
-h3. Params
 {code:title=Params|borderStyle=solid}
-<%= pretty_hash(notice.params) %>
+<%=raw pretty_hash(notice.params) %>
 {code}
 
-
-h3. Session
 {code:title=Session|borderStyle=solid}
-<%= pretty_hash(notice.session) %>
+<%=raw pretty_hash(notice.session) %>
 {code}
 
-
-h3. Backtrace
 {code:title=Backtrace|borderStyle=solid}
-<% notice.backtrace_lines.take(50).each do |line| %>
-	<%= line.number %>:  <%= line.file_relative %> -> <%= line.method %>
+<% notice.backtrace.lines.take(50).each do |line| %>
+<%=raw line.number %>: <%=raw line.file_relative %> -> <%=raw line.method %>
 <% end %>
 <% if notice.backtrace.lines.count > 50 %>
-	(TRUNCATED)
+(TRUNCATED)
 <% end %>
 {code}
 
-h3. Environment
-<% for key, val in notice.env_vars %>
-  *<%= key %>*: <%= val %>\\
+<% if notice.env_vars.present? %>
+h2. Environment
+
+||Key||Value||
+<% notice.env_vars.each do |key, val| %>|<%=raw key %>|<%=raw val %>|
+<% end %>
 <% end %>
 
 <% end %>

@@ -1,4 +1,4 @@
-require 'jira'
+require 'jira-ruby'
 
 module ErrbitJiraPlugin
   class IssueTracker < ErrbitPlugin::IssueTracker
@@ -60,12 +60,8 @@ module ErrbitJiraPlugin
       }
     end
 
-    def self.body_template
-      @body_template ||= ERB.new(File.read(
-        File.join(
-          ErrbitJiraPlugin.root, 'views', 'jira_issues_body.txt.erb'
-        )
-      ))
+    def render_body_args
+      ['/jira_issues_body', formats: [:txt, :text], handlers: [:erb]]
     end
 
     def configured?
@@ -111,16 +107,19 @@ module ErrbitJiraPlugin
 
         jira_issue = client.Issue.build
 
-        jira_issue.save(issue_fields)
+        if !jira_issue.save(issue_fields)
+          errors = jira_issue.errors.to_a.map{|p| p.join(': ')}.join(", ")
+          raise ErrbitJiraPlugin::IssueError, "Could not create an issue with Jira: #{errors}."
+        end
 
-        jira_url(params['project_id'])
+        jira_url(jira_issue.key)
       rescue JIRA::HTTPError
         raise ErrbitJiraPlugin::IssueError, "Could not create an issue with Jira.  Please check your credentials."
       end
     end
 
-    def jira_url(project_id)
-      "#{params['base_url']}#{params['context_path']}browse/#{project_id}"
+    def jira_url(jira_issue_key)
+      "#{params['base_url']}#{params['context_path']}/browse/#{jira_issue_key}"
     end
 
     def url
