@@ -100,7 +100,7 @@ module ErrbitJiraPlugin
                             "summary" => title.gsub("\n", ' ').gsub("\r", ' '),
                             "description" => body,
                             "project"=> {"id"=> project.id},
-                            "issuetype"=>{"id"=>"3"},
+                            "issuetype"=>{"id"=>"10009"},
                             "priority"=>{"name"=>params['issue_priority']}
                           }
                         }
