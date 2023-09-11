@@ -97,7 +97,7 @@ module ErrbitJiraPlugin
 
         issue_fields =  {
                           "fields" => {
-                            "summary" => title,
+                            "summary" => title.gsub("\n", ' ').gsub("\r", ' '),
                             "description" => body,
                             "project"=> {"id"=> project.id},
                             "issuetype"=>{"id"=>"3"},
